@@ -1,5 +1,8 @@
 flask
 flask_mail
 gunicorn
+pyqrcode
+pypng
+
 
 
