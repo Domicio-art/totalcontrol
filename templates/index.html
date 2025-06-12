@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Total Control - Início{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1 class="display-4">Bem-vindo ao <strong>Total Control</strong></h1>
+    <p class="lead">O sistema de PDV ideal para sua loja ou comércio</p>
+    <a href="{{ url_for('funcionalidades') }}" class="btn btn-primary btn-lg mt-3">Conheça o sistema</a>
+</div>
+{% endblock %}

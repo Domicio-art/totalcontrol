@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Planos - Total Control{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Planos do Total Control</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h3 class="card-title text-center">Plano Único</h3>
+                <p class="text-center fs-4"><strong>R$ 199,00</strong> à vista</p>
+                <h2>Pagamento via Pix</h2>
+<p>Escaneie o QR Code abaixo ou copie e cole no app do seu banco:</p>
+<img src="/gerar_pix/49.90" alt="QR Code Pix">
+
+                <ul>
+                    <li>Sistema completo de PDV</li>
+                    <li>Controle de estoque e vendas</li>
+                    <li>Suporte via WhatsApp ou Email</li>
+                    <li>Atualizações e melhorias constantes</li>
+                </ul>
+                <div class="d-grid mt-4">
+                    <a href="{{ url_for('pagar_pix') }}" class="btn btn-success btn-lg">
+                        Pagar com Pix e confirmar via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
