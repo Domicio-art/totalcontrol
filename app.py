@@ -5,15 +5,18 @@ import png
 from flask import send_file
 from io import BytesIO
 
+
 app = Flask(__name__)
 app.secret_key = 'TotalControlSegredo2025!'  # Necessário para usar flash() e sessões
+import os
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
 
 # Configurações do Flask-Mail (substitua pelos seus dados)
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'dnatividadesilva@gmail.com'
-app.config['MAIL_PASSWORD'] = 'ubeq fmpu twlx vzrq'
+app.config['MAIL_SERVER'] = 'smtp.zoho.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = 'contato@totalcontrol.net.br'
+app.config['MAIL_PASSWORD'] = '3AiQ9LDBY66j'
 
 mail = Mail(app)
 
@@ -81,8 +84,8 @@ def contato():
 
         try:
             msg = Message(subject=f"Contato pelo site - {nome}",
-                          sender=app.config['MAIL_USERNAME'],    # quem envia
-                          recipients=[app.config['MAIL_USERNAME']])  # quem recebe (você mesmo)
+                          sender=app.config['MAIL_USERNAME'],
+                          recipients=[app.config['MAIL_USERNAME']])
 
             corpo = f"Nome: {nome}\nEmail: {email}\nMensagem:\n{mensagem}"
             msg.body = corpo
