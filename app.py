@@ -10,6 +10,27 @@ app = Flask(__name__)
 app.secret_key = 'TotalControlSegredo2025!'  # Necessário para usar flash() e sessões
 import os
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+<<<<<<< HEAD
+=======
+
+import pyqrcode
+import png
+
+
+# Chave Pix e dados fixos
+chave_pix = "construsilva.loja01@gmail.com"
+nome_recebedor = "TOTAL CONTROL"
+cidade = "SAO PAULO"
+valor = "199.00"  # valor fixo em reais, pode mudar
+
+# Payload no padrão Pix Copia e Cola
+payload = f"""00020126360014BR.GOV.BCB.PIX0114{chave_pix}520400005303986540{valor}5802BR5913{nome_recebedor}6009{cidade}62070503***6304"""
+
+# Criar e salvar QR Code como PNG
+qr = pyqrcode.create(payload)
+qr.png("static/img/pix_qr.png", scale=6)
+
+>>>>>>> 1bd739c (Melhorias na seção de pagamento via Pix com QR e email atualizado)
 
 # Configurações do Flask-Mail (substitua pelos seus dados)
 app.config['MAIL_SERVER'] = 'smtp.zoho.com'
@@ -20,37 +41,6 @@ app.config['MAIL_PASSWORD'] = '3AiQ9LDBY66j'
 
 mail = Mail(app)
 
-@app.route('/gerar_pix/<float:valor>')
-def gerar_pix(valor):
-    # Substitua com seus dados reais
-    chave_pix = 'construsilva.loja01@gmail.com'
-    nome_recebedor = 'CONSTRUSILVA LTDA'
-    cidade = 'São Paulo'
-
-    payload = f"""
-    000201
-    26{len(f'0014br.gov.bcb.pix01{len(chave_pix):02}{chave_pix}')}0014br.gov.bcb.pix01{len(chave_pix):02}{chave_pix}
-    52040000
-    5303986
-    540{len(f'{valor:.2f}'):02}{valor:.2f}
-    5802BR
-    59{len(nome_recebedor):02}{nome_recebedor}
-    60{len(cidade):02}{cidade}
-    62070503***        
-    """.replace("\n", "").replace(" ", "")
-
-    # CRC-16 do Pix
-    from crc16 import crc16xmodem
-    payload_sem_crc = payload + "6304"
-    crc = format(crc16xmodem(payload_sem_crc.encode('utf-8')), '04X')
-    payload_completo = payload + "6304" + crc
-
-    # Gerar QR code
-    qr = pyqrcode.create(payload_completo)
-    buffer = BytesIO()
-    qr.png(buffer, scale=6)
-    buffer.seek(0)
-    return send_file(buffer, mimetype='image/png')
 
 
 @app.route('/')
