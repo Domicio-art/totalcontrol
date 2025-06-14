@@ -105,7 +105,7 @@ def contato():
 
 @app.route('/pagar_pix')
 def pagar_pix():
-    return redirect('https://wa.me/seu_numero_whatsapp?text=Quero%20assinar%20o%20Total%20Control%20via%20Pix')
+    return redirect('https://wa.me/5511985463550_whatsapp?text=Quero%20assinar%20o%20Total%20Control%20via%20Pix')
 
 if __name__ == '__main__':
     app.run(debug=True)
