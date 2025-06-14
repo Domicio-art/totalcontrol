@@ -17,20 +17,51 @@ app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or '3AiQ9LDBY66j'
 
 mail = Mail(app)
 
-# Chave Pix e dados fixos
+# === Funções para gerar payload Pix ===
+
+def gerar_payload_pix(chave, nome, cidade, valor):
+    valor_formatado = f"{valor:.2f}"
+    payload_sem_crc = (
+        "000201"
+        "26360014BR.GOV.BCB.PIX"
+        f"0114{chave}"
+        "52040000"
+        "5303986"
+        f"540{len(valor_formatado):02}{valor_formatado}"
+        "5802BR"
+        f"5913{nome[:13]}"
+        f"6009{cidade[:9]}"
+        "62070503***"
+    )
+    crc = calcular_crc16(payload_sem_crc + "6304")
+    return payload_sem_crc + f"6304{crc}"
+
+def calcular_crc16(payload):
+    polinomio = 0x1021
+    resultado = 0xFFFF
+    for char in payload:
+        resultado ^= ord(char) << 8
+        for _ in range(8):
+            if resultado & 0x8000:
+                resultado = (resultado << 1) ^ polinomio
+            else:
+                resultado <<= 1
+            resultado &= 0xFFFF
+    return format(resultado, '04X')
+
+# === Dados do Pix e geração do QR Code ===
+
 chave_pix = "construsilva.loja01@gmail.com"
 nome_recebedor = "TOTAL CONTROL"
 cidade = "SAO PAULO"
-valor = "199.00"  # valor fixo em reais
+valor = 199.00
 
-# Payload no padrão Pix Copia e Cola
-payload = f"""00020126360014BR.GOV.BCB.PIX0114{chave_pix}520400005303986540{valor}5802BR5913{nome_recebedor}6009{cidade}62070503***6304"""
-
-# Criar e salvar QR Code como PNG
+payload = gerar_payload_pix(chave_pix, nome_recebedor, cidade, valor)
 qr = pyqrcode.create(payload)
 qr.png("static/img/pix_qr.png", scale=6)
 
-# Rotas principais
+# === Rotas principais ===
+
 @app.route('/')
 def index():
     return render_template('index.html')
