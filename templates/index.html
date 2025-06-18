@@ -6,12 +6,33 @@
 <div class="container mt-5 text-center">
     <h1 class="display-4">Bem-vindo ao <strong>Total Control</strong></h1>
     <p class="lead">O sistema de PDV ideal para sua loja ou comércio</p>
+     <a href="{{ url_for('funcionalidades') }}" class="btn btn-primary btn-lg mt-3">Conheça o sistema</a>
+
+   </div>
+<section id="demonstração" class="container my-5">
+  <h2 class="mb-4">Veja o Total Control em ação</h2>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <img src="{{ url_for('static', filename='media/sistema1.png') }}" class="img-fluid rounded shadow" alt="Tela 1">
+    </div>
+    <div class="col-md-6 mb-3">
+      <img src="{{ url_for('static', filename='media/sistema2.png') }}" class="img-fluid rounded shadow" alt="Tela 2">
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <video controls class="w-100 rounded shadow">
+      <source src="{{ url_for('static', filename='media/demo.mp4') }}" type="video/mp4">
+      Seu navegador não suporta vídeo.
+    </video>
+  </div>
     <p>Fale conosco: <a href="mailto:contato@totalcontrol.net.br">contato@totalcontrol.net.br</a></p>
     <p></p><a href="https://wa.me/5511985463550" target="_blank">
   <img src="/static/img/whatsapp-icon.png" alt="Fale pelo WhatsApp" />
 </a></p>
 
-    <a href="{{ url_for('funcionalidades') }}" class="btn btn-primary btn-lg mt-3">Conheça o sistema</a>
-</div>
+</section>
+
 
 {% endblock %}

@@ -1,12 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, send_file
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mail import Mail, Message
 import pyqrcode
 import png
-from io import BytesIO
 import os
 
 app = Flask(__name__)
-app.secret_key = 'TotalControlSegredo2025!'  # Necessário para usar flash() e sessões
+app.secret_key = 'TotalControlSegredo2025!'
 
 # Configurações do Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.zoho.com'
@@ -14,54 +13,74 @@ app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'contato@totalcontrol.net.br'
 app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD') or '3AiQ9LDBY66j'
-
 mail = Mail(app)
 
-# === Funções para gerar payload Pix ===
+# --- Funções para gerar o payload Pix e CRC-16 ---
 
-def gerar_payload_pix(chave, nome, cidade, valor):
-    valor_formatado = f"{valor:.2f}"
+def calcular_crc16(payload: str) -> str:
+    pol = 0x1021
+    res = 0xFFFF
+    for ch in payload:
+        res ^= ord(ch) << 8
+        for _ in range(8):
+            if res & 0x8000:
+                res = ((res << 1) ^ pol) & 0xFFFF
+            else:
+                res = (res << 1) & 0xFFFF
+    return f"{res:04X}"
+
+
+def gerar_payload_pix(chave: str, nome: str, cidade: str, valor: float) -> str:
+    # 1) Formata valor
+    valor_str = f"{valor:.2f}"
+
+    # 2) Merchant Account Information (GUI + chave)
+    gui = "BR.GOV.BCB.PIX"
+    sub_00 = f"00{len(gui):02}{gui}"
+    sub_01 = f"01{len(chave):02}{chave}"
+    mai = sub_00 + sub_01
+    mai_full = f"26{len(mai):02}{mai}"
+
+    # Campos fixos
+    merchant_category = "52040000"
+    currency = "5303986"
+    amount = f"54{len(valor_str):02}{valor_str}"
+    country = "5802BR"
+    merchant_name = f"59{len(nome[:25]):02}{nome[:25]}"
+    merchant_city = f"60{len(cidade[:15]):02}{cidade[:15]}"
+    additional = "62070503***"
+
+    # Monta payload sem CRC
     payload_sem_crc = (
         "000201"
-        "26360014BR.GOV.BCB.PIX"
-        f"0114{chave}"
-        "52040000"
-        "5303986"
-        f"540{len(valor_formatado):02}{valor_formatado}"
-        "5802BR"
-        f"5913{nome[:13]}"
-        f"6009{cidade[:9]}"
-        "62070503***"
+        + mai_full
+        + merchant_category
+        + currency
+        + amount
+        + country
+        + merchant_name
+        + merchant_city
+        + additional
+        + "6304"
     )
-    crc = calcular_crc16(payload_sem_crc + "6304")
-    return payload_sem_crc + f"6304{crc}"
 
-def calcular_crc16(payload):
-    polinomio = 0x1021
-    resultado = 0xFFFF
-    for char in payload:
-        resultado ^= ord(char) << 8
-        for _ in range(8):
-            if resultado & 0x8000:
-                resultado = (resultado << 1) ^ polinomio
-            else:
-                resultado <<= 1
-            resultado &= 0xFFFF
-    return format(resultado, '04X')
+    # Calcula CRC e retorna payload completo
+    crc = calcular_crc16(payload_sem_crc)
+    return payload_sem_crc + crc
 
-# === Dados do Pix e geração do QR Code ===
-
-chave_pix = "construsilva.loja01@gmail.com"
+# --- Gera e salva o QR Code ao iniciar ---
+chave_pix = "contato@totalcontrol.net.br"
 nome_recebedor = "TOTAL CONTROL"
 cidade = "SAO PAULO"
 valor = 199.00
-
 payload = gerar_payload_pix(chave_pix, nome_recebedor, cidade, valor)
+print("PIX COPIA E COLA:", payload)
 qr = pyqrcode.create(payload)
-qr.png("static/img/pix_qr.png", scale=6)
+# Garante que a pasta existe
+os.makedirs(os.path.join(app.root_path, 'static', 'img'), exist_ok=True)
+qr.png(os.path.join(app.root_path, 'static', 'img', 'pix_qr.png'), scale=6)
 
-# === Rotas principais ===
-
+# --- Rotas do Flask ---
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -84,11 +103,9 @@ def contato():
         nome = request.form.get('nome')
         email = request.form.get('email')
         mensagem = request.form.get('mensagem')
-
         if not nome or not email or not mensagem:
             flash('Por favor, preencha todos os campos.', 'danger')
             return redirect(url_for('contato'))
-
         try:
             msg = Message(subject=f"Contato pelo site - {nome}",
                           sender=app.config['MAIL_USERNAME'],
@@ -97,15 +114,15 @@ def contato():
             mail.send(msg)
             flash('Mensagem enviada com sucesso!', 'success')
         except Exception as e:
-            flash(f'Erro ao enviar a mensagem: {str(e)}', 'danger')
-
+            flash(f"Erro ao enviar a mensagem: {str(e)}", 'danger')
         return redirect(url_for('contato'))
-
     return render_template('contato.html')
 
 @app.route('/pagar_pix')
 def pagar_pix():
-    return redirect('https://wa.me/5511985463550_whatsapp?text=Quero%20assinar%20o%20Total%20Control%20via%20Pix')
+    return redirect(
+        'https://wa.me/5511985463550?text=Quero%20assinar%20o%20Total%20Control%20via%20Pix'
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
