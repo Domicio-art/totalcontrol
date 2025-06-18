@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Pix Gerado com Sucesso</h2>
+  <p><strong>Valor:</strong> R$ {{ valor }}</p>
+  <p><strong>Código Pix Copia e Cola:</strong></p>
+  <pre>{{ payload }}</pre>
+  <img src="{{ url_for('static', filename='temp/qr_pix.png') }}" alt="QR Code Pix">
+  <br><br>
+  <a href="{{ url_for('pix_dinamico') }}">Gerar outro</a>
+{% endblock %}

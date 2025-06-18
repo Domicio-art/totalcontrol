@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Gerar Pix Dinâmico</h2>
+  <form method="post">
+    <label for="valor">Valor (R$):</label>
+    <input type="number" step="0.01" name="valor" required>
+    <button type="submit">Gerar QR Code</button>
+  </form>
+{% endblock %}

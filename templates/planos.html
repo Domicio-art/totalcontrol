@@ -11,31 +11,52 @@
             <div class="card shadow-sm p-4">
                 <h3 class="card-title text-center">Plano Único</h3>
                 <p class="text-center fs-4"><strong>R$ 199,00</strong> à vista</p>
-<h3>Pagamento via Pix</h3>
-<p>Escaneie o QR Code abaixo ou copie a chave Pix:</p>
-<img src="{{ url_for('static', filename='img/pix_qr.png') }}" alt="QR Code Pix" style="max-width: 200px;">
-<p><strong>Chave Pix:</strong>contato@totalcontrol.net.br</p>
-<button onclick="copiarPix()" class="btn btn-secondary">Copiar chave Pix</button>
 
-<script>
-function copiarPix() {
-  navigator.clipboard.writeText("contato@totalcontrol.net.br");
-  alert("Chave Pix copiada!");
-}
-</script>
+                <h4 class="mt-4">Pagamento via Pix</h4>
+                <p>Escaneie o QR Code abaixo ou copie a chave Pix:</p>
+                <img src="{{ url_for('static', filename='img/pix_qr.png') }}" alt="QR Code Pix" style="max-width: 200px;">
+                <p><strong>Chave Pix:</strong> contato@totalcontrol.net.br</p>
+                <button onclick="copiarPix()" class="btn btn-secondary mb-3">Copiar chave Pix</button>
+                <script>
+                function copiarPix() {
+                    navigator.clipboard.writeText("contato@totalcontrol.net.br");
+                    alert("Chave Pix copiada!");
+                }
+                </script>
 
-<ul>
-    <li>Sistema completo de PDV</li>
-    <li>Controle de estoque e vendas</li>
-    <li>Suporte via WhatsApp ou Email</li>
-    <li>Atualizações e melhorias constantes</li>
-</ul>
+                <ul class="nav justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('pix_dinamico') }}">Pix Dinâmico</a>
+                    </li>
+                </ul>
 
-<div class="d-grid mt-4">
-    <a href="https://wa.me/5511985463550?text=Olá!%20Efetuei%20o%20pagamento%20via%20Pix%20de%20R%24100,00%20para%20o%20sistema%20Total%20Control."
-       target="_blank" class="btn btn-success btn-lg">
-        Confirmar via WhatsApp
-    </a>
+                <ul>
+                    <li>Sistema completo de PDV</li>
+                    <li>Controle de estoque e vendas</li>
+                    <li>Suporte via WhatsApp ou Email</li>
+                    <li>Atualizações e melhorias constantes</li>
+                </ul>
+
+                <div class="d-grid mt-4">
+                    <a href="https://wa.me/5511985463550?text=Olá!%20Efetuei%20o%20pagamento%20via%20Pix%20de%20R%24199,00%20para%20o%20sistema%20Total%20Control."
+                       target="_blank" class="btn btn-success btn-lg mb-2">
+                        Confirmar via WhatsApp
+                    </a>
+                </div>
+
+                <hr class="my-4">
+
+                <h4 class="text-center">Ou pague com Cartão de Crédito</h4>
+                <div class="d-grid mt-2">
+                    <a href="https://pag.ae/7_LY2uYM1" target="_blank" class="btn btn-primary btn-lg">
+                        Pagar com Cartão
+                    </a>
+                </div>
+                <p class="text-center text-muted mt-2" style="font-size: 0.9rem;">
+                    Pagamento 100% seguro via Mercado Pago / PagSeguro.
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
-
 {% endblock %}

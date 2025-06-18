@@ -123,6 +123,32 @@ def pagar_pix():
     return redirect(
         'https://wa.me/5511985463550?text=Quero%20assinar%20o%20Total%20Control%20via%20Pix'
     )
+from flask import Flask, render_template, request, redirect, url_for, flash
+# (demais imports já estão no seu código...)
+
+@app.route('/pix_dinamico', methods=['GET', 'POST'])
+def pix_dinamico():
+    if request.method == 'POST':
+        try:
+            valor = float(request.form['valor'])
+        except ValueError:
+            flash('Valor inválido.', 'danger')
+            return redirect(url_for('pix_dinamico'))
+
+        chave_pix = "contato@totalcontrol.net.br"
+        nome_recebedor = "TOTAL CONTROL"
+        cidade = "SAO PAULO"
+
+        payload = gerar_payload_pix(chave_pix, nome_recebedor, cidade, valor)
+        qr = pyqrcode.create(payload)
+        os.makedirs("static/temp", exist_ok=True)
+        qr_path = f"static/temp/qr_pix.png"
+        qr.png(qr_path, scale=6)
+
+        return render_template('pix_gerado.html', valor=valor, payload=payload, qr_path=qr_path)
+
+    return render_template('pix_form.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)

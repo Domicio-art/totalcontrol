@@ -10,7 +10,33 @@
 
    </div>
 <section id="demonstração" class="container my-5">
-  <h2 class="mb-4">Veja o Total Control em ação, role a tela para ver o vídeo.</h2>
+<h2 class="mb-4">
+  <div class="marquee-container">
+    <span class="marquee-text">Veja o Total Control em ação, role a tela para ver o vídeo.</span>
+  </div>
+</h2>
+
+<style>
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.marquee-text {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 12s linear infinite;
+  font-weight: bold;
+}
+
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+</style>
+
 
   <div class="row">
     <div class="col-md-6 mb-3">
@@ -22,14 +48,19 @@
   </div>
 
   <div class="mt-4">
-    <video controls class="w-100 rounded shadow">
-      <source src="{{ url_for('static', filename='media/demo.mp4') }}" type="video/mp4">
-      Seu navegador não suporta vídeo.
-    </video>
+  <div class="ratio ratio-16x9">
+    <iframe
+      src="https://www.youtube.com/embed/iUHg9LysIG8"
+      title="Demonstração do Total Control"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      class="rounded shadow">
+    </iframe>
   </div>
+</div>
+
     <p>Fale conosco: <a href="mailto:contato@totalcontrol.net.br">contato@totalcontrol.net.br</a></p>
     <p></p><a href="https://wa.me/5511985463550" target="_blank">
-  <img src="/static/img/whatsapp-icon.png" alt="Fale pelo WhatsApp" />
 </a></p>
 
 </section>
